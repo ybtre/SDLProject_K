@@ -1,20 +1,37 @@
-#DevLog - ~1:00h
+#DevLog - ~0:00h
+Dungeon Game
+
+## Game 6/10 in the 10 games in 10 weeks challenge
 ////////////////////////////////////
               NOTE:
 ////////////////////////////////////
 #### Goals:
-- test jumbo build setup
-- test clang over gcc
-- test compile_commands.json
+- spend min ~12h per game
+- aim for 10 games by week 10 
+- have a small scope finished game by the end of the week
+- even if not finished - still release it
 
 ////////////////////////////////////
               TODO:
+////////////////////////////////////
+
+- mockup
+- room generation
+- player movement
+- player move between rooms
+- enemy generation in rooms
+- enemy pathfinding
+- basic combat
+- - player hp
+- - enemy hp
+- - player deal dmg
+- - enemy deal dmg
+- - player take dmg
+- - enemy take dmg
+- player stats
+- cleared room rewards
+
 
 ////////////////////////////////////
               DONE:
 ////////////////////////////////////
-
-//7.11.2023 ~ 1h
-- test jumbo build setup - success - ~0:25
-- test clang over gcc - 50/50 - ~0:10
-- test compile_commands.json - fail - ~0:25
