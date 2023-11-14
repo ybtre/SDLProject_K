@@ -35,3 +35,11 @@ Dungeon Game
 ////////////////////////////////////
               DONE:
 ////////////////////////////////////
+
+//14.11 - 
+- WIP mockup - 1h
+- WIP room generation
+
+//13.11 - ~1h
+- WIP mockup
+- project skeleton from template

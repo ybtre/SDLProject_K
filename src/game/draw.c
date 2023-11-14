@@ -6,7 +6,7 @@ void add_texture_to_cache(const char *NAME, SDL_Texture *SDLTEXTURE);
 void prepare_scene(void)
 {
 	//SDL_SetRenderDrawColor(game.renderer, 190, 215, 134, 255);
-	SDL_SetRenderDrawColor(game.renderer, 16, 33, 43, 255);
+	SDL_SetRenderDrawColor(game.renderer, 19, 19, 29, 255);
 	SDL_RenderClear(game.renderer);
 }
 
