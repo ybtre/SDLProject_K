@@ -17,9 +17,9 @@ void init_stage(void)
     cursor_texture = load_texture("assets/cursor.png");
     //game.spritesheet = load_texture("assets/spritesheet.png"); 
 
-    game_state = MAIN_MENU;
+    game_state = PLAYING;
 
-    stage.turn = TURN_NOONE;
+    init_playing();
 }
 
 inline void update(void)
@@ -37,6 +37,8 @@ inline void update(void)
         
         case PLAYING:
             {
+                //TODO:
+                update_playing();
             }
             break;
 
@@ -62,16 +64,34 @@ inline void render(void)
     {
         case MAIN_MENU:
             {
+                char buff[48];
+                sprintf(buff, "MAIN MENU");
+                
+
+                SDL_Rect dest = {SCR_W / 4 - 200, SCR_H  / 2 - 80, 0, 0};
+                render_text(buff, dest, 2.f);
             }
             break;
         
         case PLAYING:
             {
+                //TODO:
+                render_playing(); 
+                char buff[48];
+                sprintf(buff, "PLAYING");
+
+                SDL_Rect dest = {SCR_W / 4 - 200, SCR_H  / 2 - 80, 0, 0};
+                render_text(buff, dest, 2.f);
             }
             break;
 
         case GAME_OVER:
             {
+                char buff[48];
+                sprintf(buff, "GAME OVER");
+
+                SDL_Rect dest = {SCR_W / 4 - 200, SCR_H  / 2 - 80, 0, 0};
+                render_text(buff, dest, 2.f);
             }
             break;
     }

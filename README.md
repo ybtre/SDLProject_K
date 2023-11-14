@@ -1,4 +1,4 @@
-#DevLog - ~0:00h
+#DevLog - ~4:30h
 Dungeon Game
 
 ## Game 6/10 in the 10 games in 10 weeks challenge
@@ -37,8 +37,9 @@ Dungeon Game
 ////////////////////////////////////
 
 //14.11 - 
-- WIP mockup - 1h
-- WIP room generation
+- WIP mockup - 1:30h
+- WIP room generation - 2h
+- - almost done, need to know which rooms connects with it
 
 //13.11 - ~1h
 - WIP mockup

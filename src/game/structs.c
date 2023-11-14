@@ -21,7 +21,19 @@ typedef struct
     int wheel;
 } Mouse;
 
-#define TEXTURE_CACHE_MAX   16
+typedef struct Vec2i
+{
+    int x;
+    int y;
+} Vec2i;
+
+typedef struct Vec2
+{
+    float x;
+    float y;
+} Vec2;
+
+#define TEXTURE_CACHE_MAX   36
 typedef struct
 {
 	SDL_Renderer*   renderer;
@@ -33,8 +45,6 @@ typedef struct
     int             keyboard[MAX_KEYBOARD_KEYS];
 
     TTF_Font        *font;
-
-    SDL_Texture     *spritesheet;
 
     Texture         texture_cache[TEXTURE_CACHE_MAX];
 } Game;
@@ -50,12 +60,12 @@ Game_State game_state;
 
 typedef enum Layers
 {
-    BG_0,
-    BG_1,
-    BG_2,
-    GAMEPLAY,
-    FG,
-    UI,
+    L_BG,
+    L_FLOOR,
+    L_WALLS,
+    L_DOORS,
+    L_GAMEPLAY,
+    L_UI,
 
     NUM_LAYERS,
 } Layers;
@@ -75,102 +85,96 @@ typedef struct Game_Flags
 } Game_Flags;
 Game_Flags game_flags;
 
+
+typedef enum Entity_Type
+{
+    ENT_PLAYER,
+    ENT_PLAYER_BULLET,
+
+    ENT_UI_P_HEALTH,
+
+    ENT_ENEMY,
+    ENT_ENEMY_BULLET,
+
+    ENT_BACKGROUND,
+
+    ENT_DOOR,
+
+    ENT_WALL,
+
+
+    NUM_ENTITIES
+} Entity_Type;
+
 typedef struct
 {
-    char            active;
-
     SDL_Rect        src;
-    SDL_Rect        dest;
 
     SDL_Texture     *tex;
 } Sprite;
 
-typedef enum Entity_Type
+typedef struct
 {
-    GRID_TILE   = 0,
-    GRID_LARGE  = 1,
-    GRID_SMALL  = 2,
-} Entity_Type;
-
-typedef enum Grid_Color
-{
-    R = 0,
-    G = 1,
-    B = 2,
-} Grid_Color;
+    char            loop;
+    int             frames_num;
+    int             frames_cur;
+    float           frames_rate;
+    float           frames_timer;
+} AnimData;
 
 typedef struct
 {
+    int             id;
     char            active;
-    Entity_Type     ent_type;
+    Entity_Type     type;
 
-    int             x;      //world x
-    int             y;      //world y
-    int             idx;    //grid id x
-    int             idy;    //grid id y
+    /*
+    int             hp;
+    int             base_hp;
+    int             dmg;
+    int             base_dmg;
+
+    char            facing_right;
+    char            hit_this_frame;
+    int             hit_frame_timer;
+    int             hit_frame_length;
+    */
+
+    SDL_Rect        rect; //x, y for position, w, h for constructing dest rect
+    Vec2            vel;
 
     SDL_Rect        hitbox;
-    SDL_Rect        dest;
 
-    Grid_Color      color;
-    Sprite          *sprite;
+    Sprite          sprite;
+    //AnimData        anim;
     //Layers          layer;
+
 } Entity;
-Entity grid_large[GRID_X][GRID_Y];
 
 typedef struct
 {
-    int         x;
-    int         y;
-    int         idx;
-    int         idy;
+    char            is_moving;
 
-    SDL_Rect    dest;
-} Common_Ent_Data;
+    float           reload_rate;
+    float           reload_timer;
 
-typedef enum
-{
-    TILE_DEAD,
-    TILE_ALIVE,
-} Tile_State;
+    int             score;
 
-typedef struct
-{
-    Tile_State          state;
-
-    Common_Ent_Data     data;
-} Tile;
+    char            take_dmg;
+    float           take_dmg_rate;
+    float           take_dmg_timer;
+    
+} PlayerData;
 
 typedef struct
 {
-    Grid_Color          color;
-
-    char                winner;
-
-    Tile                tiles[GRID_X][GRID_Y];
-
-    Common_Ent_Data     data;
-} Board;
-
-typedef enum
-{
-    TURN_NOONE        = 0,
-    TURN_GREEN        = 1,
-    TURN_ORANGE       = 2,
-} Turn;
-
-typedef struct
-{
-    //Entity 0 is always player
-    Turn            turn;
-    Turn            prev_turn;
-
-    Board           *current_board;
-
-    char            game_winner;
-
+    Entity          player;
     int             entity_count;
     Entity          entities_pool[ENTITIES_MAX];
+
+    char            freeze_frame;
+    float           freeze_frame_duration;
+    float           freeze_frame_timer;
 }Stage;
 Stage stage;
 

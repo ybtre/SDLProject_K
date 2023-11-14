@@ -25,6 +25,9 @@
 #include "draw.c"
 
 #include "text.c"
+
 #include "init.c"
+#include "dungeon_generator.c"
+#include "scene_playing.c"
 #include "stage.c"
 #include "main.c"

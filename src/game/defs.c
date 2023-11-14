@@ -5,17 +5,24 @@
 #define SCREEN_WIDTH            320
 #define SCREEN_HEIGHT           180
 #define SCREEN_SCALE            4                   // x4 equals 1280x720
+                                                   
+                                                    
+#define SCR_W                   SCREEN_WIDTH * SCREEN_SCALE
+#define SCR_H                   SCREEN_HEIGHT * SCREEN_SCALE
+
 
 #define FPS                     60
 
 #define PI                      3.14159265358979323846
 
-
-#define GRID_SIZE               8
-#define GRID_X                  20
-#define GRID_Y                  11
-
 #define ENTITIES_MAX            256
+
+#define PLAYER_SPEED            20
+#define PLAYER_VELOCITY         .1
+
+#define PLAYER_BULLET_SPEED     4
+
+#define ENEMY_VELOCITY          .1
 
 
 #define MAX_NAME_LENGTH         32
@@ -48,9 +55,9 @@ enum
 #define AND     &&
 #define OR      ||
 #define MOD     %
-#define ELIF    ELSE IF
-#define TRUE    1
-#define FALSE   0
+#define elif    else if
+#define true    1
+#define false   0
 
 #define ifnull( _ ) if( ( _ ) == NULL)
 

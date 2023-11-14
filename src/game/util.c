@@ -1,8 +1,3 @@
-typedef struct Vec2i
-{
-    int x;
-    int y;
-} Vec2i;
 
 uint64_t total_malloc    = 0;
 uint64_t total_free      = 0;
@@ -48,22 +43,7 @@ void render_text(char* text, SDL_Rect dest, float SCALE) {
 	SDL_DestroyTexture(tex);
     SDL_FreeSurface(surf);
 }
-void calc_slope(int X1, int Y1, int X2, int Y2, float *DX, float *DY)
-{
-    int steps = MAX(abs(X1 - X2), abs(Y1 - Y2));
 
-    if(steps == 0)
-    {
-        *DX = *DY = 0;
-        return;
-    }
-
-    *DX = (X1 - X2);
-    *DX /= steps;
-
-    *DY = (Y1 - Y2);
-    *DY /= steps;
-}
 
 float get_angle(int X1, int Y1, int X2, int Y2)
 {
@@ -72,11 +52,7 @@ float get_angle(int X1, int Y1, int X2, int Y2)
     return angle >= 0 ? angle : 360 + angle;
 }
 
-int get_scr_width_scaled(void)
+Vec2i get_scr_scaled(void)
 {
-    return(SCREEN_WIDTH * SCREEN_SCALE);
-}
-int get_scr_height_scaled(void)
-{
-    return(SCREEN_HEIGHT * SCREEN_SCALE);
+    return((Vec2i){ SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE});
 }
