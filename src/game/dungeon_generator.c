@@ -95,6 +95,31 @@ Room create_room(int ID, int PREV_R_ID, int PREV_DOOR, int X, int Y)
     return(r);
 }
 
+//TODO:
+char check_neighboor(Room *ROOM, int DIRECTION_TO_CHECK)
+{
+    char result = false;
+
+    Room tmp;
+    for(int i = 0; i < ROOMS_TO_GEN; i++)
+    {
+        tmp = all_rooms[i];
+
+        if(tmp.dest.x == ROOM->dest.x 
+            AND tmp.dest.y == ROOM->dest.y)
+        {
+
+            result = false;
+        }
+        else
+        {
+            result = true;
+        }
+    }
+
+    return(result);
+}
+
 void generate_floor(int SEED)
 {
     SDL_Rect bounds = 
@@ -148,7 +173,9 @@ void generate_floor(int SEED)
                     {
                         SDL_Log("Making Room on the Left");
                         SDL_Log("Current Room LEFT neigh ID: %i", cur_r.neighbours[DOOR_LEFT]);
-                        if(cur_r.neighbours[DOOR_LEFT] < 0)
+                        char can_create_room = check_neighboor(&cur_r, DOOR_LEFT);
+                        //if(cur_r.neighbours[DOOR_BOT] < 0)
+                        if(can_create_room)
                         {
                             new_r = create_room(i, cur_r.id, DOOR_LEFT, cur_r.x - cur_r.dest.w - margin, cur_r.y);
 
@@ -165,7 +192,9 @@ void generate_floor(int SEED)
                     {
                         SDL_Log("Making Room on the Right");
                         SDL_Log("Current Room RIGHT neigh ID: %i", cur_r.neighbours[DOOR_RIGHT]);
-                        if(cur_r.neighbours[DOOR_RIGHT] < 0)
+                        char can_create_room = check_neighboor(&cur_r, DOOR_RIGHT);
+                        //if(cur_r.neighbours[DOOR_BOT] < 0)
+                        if(can_create_room)
                         {
                             new_r = create_room(i, cur_r.id, DOOR_RIGHT, cur_r.x + cur_r.dest.w + margin, cur_r.y);
 
@@ -182,7 +211,9 @@ void generate_floor(int SEED)
                     {
                         SDL_Log("Making Room on the Top");
                         SDL_Log("Current Room TOP neigh ID: %i", cur_r.neighbours[DOOR_TOP]);
-                        if(cur_r.neighbours[DOOR_TOP] < 0)
+                        char can_create_room = check_neighboor(&cur_r, DOOR_TOP);
+                        //if(cur_r.neighbours[DOOR_BOT] < 0)
+                        if(can_create_room)
                         {
                             new_r = create_room(i, cur_r.id, DOOR_TOP, cur_r.x, cur_r.y - cur_r.dest.h - margin);
 
@@ -199,7 +230,10 @@ void generate_floor(int SEED)
                     {
                         SDL_Log("Making Room on the Bot");
                         SDL_Log("Current Room BOT neigh ID: %i", cur_r.neighbours[DOOR_BOT]);
-                        if(cur_r.neighbours[DOOR_BOT] < 0)
+
+                        char can_create_room = check_neighboor(&cur_r, DOOR_BOT);
+                        //if(cur_r.neighbours[DOOR_BOT] < 0)
+                        if(can_create_room)
                         {
                             new_r = create_room(i, cur_r.id, DOOR_BOT, cur_r.x, cur_r.y + cur_r.dest.h + margin);
 
