@@ -104,101 +104,155 @@ void generate_floor(int SEED)
 
 
     //41good 42 breaks 43good
-    srand(43);
+    srand(41);
 
     starting_room = create_room( 0, -1, -1, SCR_W/2, SCR_H/2);
 
     all_rooms[0] = starting_room;
 
-    SDL_Log("Starting room doors: %i %i %i %i", starting_room.doors[0], starting_room.doors[1],starting_room.doors[2],starting_room.doors[3]);
+    //SDL_Log("Starting room doors: %i %i %i %i", starting_room.doors[0], starting_room.doors[1],starting_room.doors[2],starting_room.doors[3]);
    
-    Room prev_r;
-    Room r;
+    Room cur_r;
+    Room new_r;
+    const int max_cycles = 20;
     for(int i = 1; i < ROOMS_TO_GEN; i++)
     {
-        r = all_rooms[i];
-        prev_r = all_rooms[i-1];
+        new_r = all_rooms[i];
+        cur_r = all_rooms[i-1];
+
+        int cycles = 0;
+
+        pick_new_door:
+        if(cycles >= max_cycles)
+        {
+            SDL_Log("ERROR, COULD NOT GENERATE FLOOR");
+            cycles = 99999;
+            goto break_generation;
+        };
 
         int margin = 5 * SCREEN_SCALE;
         int new_room_door = rand() % 4;
-        int cycles = 0;
+        SDL_Log("Picking new door: %i", new_room_door);
         int doors_count = 0;
-        do
+
         {
-            SDL_Log("new room: %i; new door: %i, state: %i", i, new_room_door, prev_r.doors[new_room_door]);
-
-            if(prev_r.doors[new_room_door] == 1)
+            cycles++;
+            //SDL_Log("new room: %i; new door: %i, state: %i", i, new_room_door, prev_r.doors[new_room_door]);
+            SDL_Log("Current Room ID: %i", cur_r.id);
+            if(cur_r.id >= 0)
             {
-                //make new room here
-                if(new_room_door == DOOR_LEFT)
+                if(cur_r.doors[new_room_door] == 1)
                 {
-                    SDL_Log("Prev ID: %i, New ID: %i", prev_r.neighbours[DOOR_RIGHT], i);
-                    if(prev_r.neighbours[DOOR_RIGHT]== i)
-                        continue;
-
-                    r = create_room(i, prev_r.id, DOOR_LEFT, prev_r.x - prev_r.dest.w - margin, prev_r.y);
-
-                    all_rooms[i] = r;
-                    doors_count = 0;
-                }
-                elif(new_room_door == DOOR_RIGHT)
-                {
-                    SDL_Log("Prev ID: %i, New ID: %i", prev_r.neighbours[DOOR_LEFT], i);
-                    if(prev_r.neighbours[DOOR_LEFT]== i)
-                        continue;
-
-                    r = create_room(i, prev_r.id, DOOR_RIGHT, prev_r.x + prev_r.dest.w + margin, prev_r.y);
-
-                    all_rooms[i] = r;
-                    doors_count = 0;
-                }
-                elif(new_room_door == DOOR_TOP)
-                {
-                    SDL_Log("Prev ID: %i, New ID: %i", prev_r.neighbours[DOOR_BOT], i);
-                    if(prev_r.neighbours[DOOR_BOT]== i)
-                        continue;
-
-                    r = create_room(i, prev_r.id, DOOR_TOP, prev_r.x, prev_r.y - prev_r.dest.h - margin);
-
-                    all_rooms[i] = r;
-                    doors_count = 0;
-                }
-                elif(new_room_door == DOOR_BOT)
-                {
-                    SDL_Log("Prev ID: %i, New ID: %i", prev_r.neighbours[DOOR_TOP], i);
-                    if(prev_r.neighbours[DOOR_TOP]== i)
-                        continue;
-
-                    r = create_room(i, prev_r.id, DOOR_BOT, prev_r.x, prev_r.y + prev_r.dest.h + margin);
-
-                    all_rooms[i] = r;
-                    doors_count = 0;
-                }
-            }
-            else
-            {
-                doors_count++;
-                new_room_door = rand() % 4;
-                cycles++;
-
-                if(doors_count >= 4)
-                {
-                    i--;
-                    
-                    if(i < 0)
+                    //make new room here
+                    if(new_room_door == DOOR_LEFT)
                     {
-                        //TODO:
-                        SDL_Log("ERROR, COULD NOT GENERATE FLOOR");
-                        i = 999;
-                        cycles = 999;
-                        break;
+                        SDL_Log("Making Room on the Left");
+                        SDL_Log("Current Room LEFT neigh ID: %i", cur_r.neighbours[DOOR_LEFT]);
+                        if(cur_r.neighbours[DOOR_LEFT] < 0)
+                        {
+                            new_r = create_room(i, cur_r.id, DOOR_LEFT, cur_r.x - cur_r.dest.w - margin, cur_r.y);
+
+                            all_rooms[i] = new_r;
+                            doors_count = 0;
+                        }
+                        else
+                        {
+                            SDL_Log("Room Exists!");
+                            goto pick_new_door;
+                        }
+                    }
+                    elif(new_room_door == DOOR_RIGHT)
+                    {
+                        SDL_Log("Making Room on the Right");
+                        SDL_Log("Current Room RIGHT neigh ID: %i", cur_r.neighbours[DOOR_RIGHT]);
+                        if(cur_r.neighbours[DOOR_RIGHT] < 0)
+                        {
+                            new_r = create_room(i, cur_r.id, DOOR_RIGHT, cur_r.x + cur_r.dest.w + margin, cur_r.y);
+
+                            all_rooms[i] = new_r;
+                            doors_count = 0;
+                        }
+                        else
+                        {
+                            SDL_Log("Room Exists!");
+                            goto pick_new_door;
+                        }
+                    }
+                    elif(new_room_door == DOOR_TOP)
+                    {
+                        SDL_Log("Making Room on the Top");
+                        SDL_Log("Current Room TOP neigh ID: %i", cur_r.neighbours[DOOR_TOP]);
+                        if(cur_r.neighbours[DOOR_TOP] < 0)
+                        {
+                            new_r = create_room(i, cur_r.id, DOOR_TOP, cur_r.x, cur_r.y - cur_r.dest.h - margin);
+
+                            all_rooms[i] = new_r;
+                            doors_count = 0;
+                        }
+                        else
+                        {
+                            SDL_Log("Room Exists!");
+                            goto pick_new_door;
+                        }
+                    }
+                    elif(new_room_door == DOOR_BOT)
+                    {
+                        SDL_Log("Making Room on the Bot");
+                        SDL_Log("Current Room BOT neigh ID: %i", cur_r.neighbours[DOOR_BOT]);
+                        if(cur_r.neighbours[DOOR_BOT] < 0)
+                        {
+                            new_r = create_room(i, cur_r.id, DOOR_BOT, cur_r.x, cur_r.y + cur_r.dest.h + margin);
+
+                            all_rooms[i] = new_r;
+                            doors_count = 0;
+                        }
+                        else
+                        {
+                            SDL_Log("Room Exists!");
+                            goto pick_new_door;
+                        }
+                    }
+                }
+                else
+                {
+                    SDL_Log("Door is locked. Pick new Door");
+                    doors_count++;
+                    cycles++;
+                    
+                    if(doors_count < 4)
+                    {
+                        goto pick_new_door;
+                    }
+
+                    // if none of the doors are free, go back a room
+                    if(doors_count >= 4)
+                    {
+                        SDL_Log("Go Back a room");
+                        i--;
+                        new_r = all_rooms[i];
+                        cur_r = all_rooms[i-1];
+                        
+                        if(i < 0)
+                        {
+                            //TODO:
+                            SDL_Log("ERROR, COULD NOT GENERATE FLOOR");
+                            i = 999;
+                            cycles = 99999;
+                            goto break_generation;
+                            break;
+                        }
                     }
                 }
             }
-
         }
-        while(prev_r.doors[new_room_door] != 1 AND cycles < 100);
 
+        if(cur_r.doors[new_room_door] != 1 AND cycles < max_cycles)
+        {
+            goto pick_new_door;
+        }
     }
+
+break_generation:
+
     SDL_Log("Floor Gen Done.");
 }

@@ -36,6 +36,10 @@ Dungeon Game
               DONE:
 ////////////////////////////////////
 
+//15.11 - 
+- WIP floor generation - 2:30h
+- - before creating new room, need to check spatially around for neighboors
+
 //14.11 - 
 - WIP mockup - 1:30h
 - WIP room generation - 2h
