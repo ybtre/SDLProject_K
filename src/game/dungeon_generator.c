@@ -9,11 +9,13 @@ typedef enum
     NUM_DOORS,
 } DoorSide;
 
-typedef struct
+typedef struct Room
 {
+    int         id;
     //index 0 - left, 1 - right, 2 - top, 3 - bot
     int         doors[NUM_DOORS];
-    int         neighbours;
+    int         neighbours[NUM_DOORS]; // id of connected door at DOOR side
+    int         neighbours_count;
 
     int         x;
     int         y;
@@ -25,17 +27,45 @@ Room starting_room = {};
 #define ROOMS_TO_GEN            9
 Room all_rooms[ROOMS_TO_GEN];
 
-Room setup_room_tiny(int X, int Y)
+Room create_room(int ID, int PREV_R_ID, int PREV_DOOR, int X, int Y)
 {
     Room r;
 
     for(int i = 0; i < NUM_DOORS; i++)
     {
-        r.doors[i] = rand() % 2;
+        r.doors[i]          = rand() % 2;
+        r.neighbours[i]     = -1;
     }
-
+    
+    r.id     = ID;
     r.x      = X;
     r.y      = Y;
+
+    if(PREV_R_ID != -1)
+    {
+        r.neighbours_count++;
+
+        if(PREV_DOOR == DOOR_LEFT)
+        {
+            r.neighbours[DOOR_RIGHT]     = PREV_R_ID;
+            r.doors[DOOR_RIGHT]          = 1;
+        }
+        elif(PREV_DOOR == DOOR_RIGHT)
+        {
+            r.neighbours[DOOR_LEFT]      = PREV_R_ID;
+            r.doors[DOOR_LEFT]           = 1;
+        }
+        elif(PREV_DOOR == DOOR_TOP)
+        {
+            r.neighbours[DOOR_BOT]       = PREV_R_ID;
+            r.doors[DOOR_BOT]            = 1;
+        }
+        elif(PREV_DOOR == DOOR_BOT)
+        {
+            r.neighbours[DOOR_TOP]       = PREV_R_ID;
+            r.doors[DOOR_TOP]            = 1;
+        }
+    }
 
     r.dest.w = 16 * SCREEN_SCALE;
     r.dest.h = 16 * SCREEN_SCALE;
@@ -74,9 +104,9 @@ void generate_floor(int SEED)
 
 
     //41good 42 breaks 43good
-    srand(41);
+    srand(43);
 
-    starting_room = setup_room_tiny(SCR_W/2, SCR_H/2);
+    starting_room = create_room( 0, -1, -1, SCR_W/2, SCR_H/2);
 
     all_rooms[0] = starting_room;
 
@@ -102,28 +132,44 @@ void generate_floor(int SEED)
                 //make new room here
                 if(new_room_door == DOOR_LEFT)
                 {
-                    r = setup_room_tiny(prev_r.x - prev_r.dest.w - margin, prev_r.y);
+                    SDL_Log("Prev ID: %i, New ID: %i", prev_r.neighbours[DOOR_RIGHT], i);
+                    if(prev_r.neighbours[DOOR_RIGHT]== i)
+                        continue;
+
+                    r = create_room(i, prev_r.id, DOOR_LEFT, prev_r.x - prev_r.dest.w - margin, prev_r.y);
 
                     all_rooms[i] = r;
                     doors_count = 0;
                 }
                 elif(new_room_door == DOOR_RIGHT)
                 {
-                    r = setup_room_tiny(prev_r.x + prev_r.dest.w+ margin, prev_r.y);
+                    SDL_Log("Prev ID: %i, New ID: %i", prev_r.neighbours[DOOR_LEFT], i);
+                    if(prev_r.neighbours[DOOR_LEFT]== i)
+                        continue;
+
+                    r = create_room(i, prev_r.id, DOOR_RIGHT, prev_r.x + prev_r.dest.w + margin, prev_r.y);
 
                     all_rooms[i] = r;
                     doors_count = 0;
                 }
                 elif(new_room_door == DOOR_TOP)
                 {
-                    r = setup_room_tiny(prev_r.x, prev_r.y - prev_r.dest.h - margin);
+                    SDL_Log("Prev ID: %i, New ID: %i", prev_r.neighbours[DOOR_BOT], i);
+                    if(prev_r.neighbours[DOOR_BOT]== i)
+                        continue;
+
+                    r = create_room(i, prev_r.id, DOOR_TOP, prev_r.x, prev_r.y - prev_r.dest.h - margin);
 
                     all_rooms[i] = r;
                     doors_count = 0;
                 }
                 elif(new_room_door == DOOR_BOT)
                 {
-                    r = setup_room_tiny(prev_r.x, prev_r.y + prev_r.dest.h + margin);
+                    SDL_Log("Prev ID: %i, New ID: %i", prev_r.neighbours[DOOR_TOP], i);
+                    if(prev_r.neighbours[DOOR_TOP]== i)
+                        continue;
+
+                    r = create_room(i, prev_r.id, DOOR_BOT, prev_r.x, prev_r.y + prev_r.dest.h + margin);
 
                     all_rooms[i] = r;
                     doors_count = 0;
@@ -138,8 +184,6 @@ void generate_floor(int SEED)
                 if(doors_count >= 4)
                 {
                     i--;
-                    r = all_rooms[i];
-                    prev_r = all_rooms[i-1];
                     
                     if(i < 0)
                     {
@@ -153,7 +197,8 @@ void generate_floor(int SEED)
             }
 
         }
-        while(prev_r.doors[new_room_door] != 1 AND cycles < 20);
+        while(prev_r.doors[new_room_door] != 1 AND cycles < 100);
 
     }
+    SDL_Log("Floor Gen Done.");
 }
