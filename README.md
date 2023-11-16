@@ -36,11 +36,14 @@ Dungeon Game
               DONE:
 ////////////////////////////////////
 
-//15.11 - 
+//16.1 -
+- floor generation - 1:30
+
+//15.11 - 2:30
 - WIP floor generation - 2:30h
 - - before creating new room, need to check spatially around for neighboors
 
-//14.11 - 
+//14.11 - 3:30
 - WIP mockup - 1:30h
 - WIP room generation - 2h
 - - almost done, need to know which rooms connects with it

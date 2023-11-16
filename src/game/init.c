@@ -2,6 +2,9 @@
 
 void init_game(void)
 {
+    game.mouse_rect.w = 1;
+    game.mouse_rect.h = 1;
+
     init_fonts();
     //should init game.spritesheet here
 }

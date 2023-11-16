@@ -67,52 +67,78 @@ Room create_room(int ID, int PREV_R_ID, int PREV_DOOR, int X, int Y)
         }
     }
 
-    r.dest.w = 16 * SCREEN_SCALE;
-    r.dest.h = 16 * SCREEN_SCALE;
+    r.dest.w = 8 * SCREEN_SCALE;
+    r.dest.h = 8 * SCREEN_SCALE;
     r.dest.x = r.x - (r.dest.w / 2);
     r.dest.y = r.y - (r.dest.h / 2);
 
-    r.dest_doors[DOOR_LEFT].w = 2 * SCREEN_SCALE;
-    r.dest_doors[DOOR_LEFT].h = 4 * SCREEN_SCALE;
+    r.dest_doors[DOOR_LEFT].w = 1 * SCREEN_SCALE;
+    r.dest_doors[DOOR_LEFT].h = 2 * SCREEN_SCALE;
     r.dest_doors[DOOR_LEFT].x = (r.dest.x - (r.dest_doors[DOOR_LEFT].w / 2));
     r.dest_doors[DOOR_LEFT].y = (r.dest.y - (r.dest_doors[DOOR_LEFT].h / 2)) + r.dest.h /2;
 
-    r.dest_doors[DOOR_RIGHT].w = 2 * SCREEN_SCALE;
-    r.dest_doors[DOOR_RIGHT].h = 4 * SCREEN_SCALE;
+    r.dest_doors[DOOR_RIGHT].w = 1 * SCREEN_SCALE;
+    r.dest_doors[DOOR_RIGHT].h = 2 * SCREEN_SCALE;
     r.dest_doors[DOOR_RIGHT].x = (r.dest.x - (r.dest_doors[DOOR_LEFT].w / 2) + (r.dest.h ));
     r.dest_doors[DOOR_RIGHT].y = (r.dest.y - (r.dest_doors[DOOR_LEFT].h / 2)) + r.dest.h /2;
 
-    r.dest_doors[DOOR_TOP].w = 4 * SCREEN_SCALE;
-    r.dest_doors[DOOR_TOP].h = 2 * SCREEN_SCALE;
+    r.dest_doors[DOOR_TOP].w = 2 * SCREEN_SCALE;
+    r.dest_doors[DOOR_TOP].h = 1 * SCREEN_SCALE;
     r.dest_doors[DOOR_TOP].x = (r.dest.x - (r.dest_doors[DOOR_TOP].w / 2)) + r.dest.w /2;
     r.dest_doors[DOOR_TOP].y = (r.dest.y - (r.dest_doors[DOOR_LEFT].h / 2)) + r.dest_doors[DOOR_TOP].h / 2;
 
-    r.dest_doors[DOOR_BOT].w = 4 * SCREEN_SCALE;
-    r.dest_doors[DOOR_BOT].h = 2 * SCREEN_SCALE;
+    r.dest_doors[DOOR_BOT].w = 2 * SCREEN_SCALE;
+    r.dest_doors[DOOR_BOT].h = 1 * SCREEN_SCALE;
     r.dest_doors[DOOR_BOT].x = (r.dest.x - (r.dest_doors[DOOR_BOT].w / 2)) + r.dest.w /2;
     r.dest_doors[DOOR_BOT].y = (r.dest.y - (r.dest_doors[DOOR_BOT].h / 2)) + r.dest.h;
 
     return(r);
 }
 
-//TODO:
 char check_neighboor(Room *ROOM, int DIRECTION_TO_CHECK)
 {
     char result = false;
 
-    Room tmp;
+    int x, y, margin;
+    margin = 5 * SCREEN_SCALE;
+
+    if(DIRECTION_TO_CHECK == DOOR_LEFT)
+    {
+        x = ROOM->x - ROOM->dest.w - margin;
+        y = ROOM->y;
+    }
+    elif(DIRECTION_TO_CHECK == DOOR_RIGHT)
+    {
+        x = ROOM->x + ROOM->dest.w + margin;
+        y = ROOM->y;
+    }
+    elif(DIRECTION_TO_CHECK == DOOR_TOP)
+    {
+        x = ROOM->x;
+        y = ROOM->y - ROOM->dest.h - margin;
+    }
+    elif(DIRECTION_TO_CHECK == DOOR_BOT)
+    {
+        x = ROOM->x;
+        y = ROOM->y + ROOM->dest.h + margin;
+    }
+
+    Room tmp = create_room(-2, -1, -1, x, y);
+
     for(int i = 0; i < ROOMS_TO_GEN; i++)
     {
-        tmp = all_rooms[i];
+        Room t = all_rooms[i];
 
-        if(tmp.dest.x == ROOM->dest.x 
-            AND tmp.dest.y == ROOM->dest.y)
+        if(t.x == tmp.x 
+            AND t.y == tmp.y)
         {
-
+            SDL_Log("CANT create room here: %i %i %i %i", t.x, t.y, tmp.x, tmp.y);
             result = false;
+            break;
         }
         else
         {
+            //SDL_Log("CAN create room here: %i %i %i %i", t.x, t.y, tmp.x, tmp.y);
             result = true;
         }
     }
@@ -127,42 +153,39 @@ void generate_floor(int SEED)
         32 * SCREEN_SCALE, 32 * SCREEN_SCALE, 256 * SCREEN_SCALE, 128 * SCREEN_SCALE
     };
 
-
     //41good 42 breaks 43good
-    srand(41);
+    //srand(42);
+    int cycles = 0;
+
+retry_generation_from_start:
 
     starting_room = create_room( 0, -1, -1, SCR_W/2, SCR_H/2);
 
     all_rooms[0] = starting_room;
 
-    //SDL_Log("Starting room doors: %i %i %i %i", starting_room.doors[0], starting_room.doors[1],starting_room.doors[2],starting_room.doors[3]);
-   
     Room cur_r;
     Room new_r;
-    const int max_cycles = 20;
+    const int max_cycles = 1000;
     for(int i = 1; i < ROOMS_TO_GEN; i++)
     {
         new_r = all_rooms[i];
         cur_r = all_rooms[i-1];
 
-        int cycles = 0;
+        int doors_count = 0;
 
         pick_new_door:
         if(cycles >= max_cycles)
         {
-            SDL_Log("ERROR, COULD NOT GENERATE FLOOR");
-            cycles = 99999;
+            SDL_Log("ERROR, TOO MANY CYCLES");
             goto break_generation;
         };
 
         int margin = 5 * SCREEN_SCALE;
         int new_room_door = rand() % 4;
         SDL_Log("Picking new door: %i", new_room_door);
-        int doors_count = 0;
 
         {
             cycles++;
-            //SDL_Log("new room: %i; new door: %i, state: %i", i, new_room_door, prev_r.doors[new_room_door]);
             SDL_Log("Current Room ID: %i", cur_r.id);
             if(cur_r.id >= 0)
             {
@@ -174,7 +197,6 @@ void generate_floor(int SEED)
                         SDL_Log("Making Room on the Left");
                         SDL_Log("Current Room LEFT neigh ID: %i", cur_r.neighbours[DOOR_LEFT]);
                         char can_create_room = check_neighboor(&cur_r, DOOR_LEFT);
-                        //if(cur_r.neighbours[DOOR_BOT] < 0)
                         if(can_create_room)
                         {
                             new_r = create_room(i, cur_r.id, DOOR_LEFT, cur_r.x - cur_r.dest.w - margin, cur_r.y);
@@ -193,7 +215,6 @@ void generate_floor(int SEED)
                         SDL_Log("Making Room on the Right");
                         SDL_Log("Current Room RIGHT neigh ID: %i", cur_r.neighbours[DOOR_RIGHT]);
                         char can_create_room = check_neighboor(&cur_r, DOOR_RIGHT);
-                        //if(cur_r.neighbours[DOOR_BOT] < 0)
                         if(can_create_room)
                         {
                             new_r = create_room(i, cur_r.id, DOOR_RIGHT, cur_r.x + cur_r.dest.w + margin, cur_r.y);
@@ -212,7 +233,6 @@ void generate_floor(int SEED)
                         SDL_Log("Making Room on the Top");
                         SDL_Log("Current Room TOP neigh ID: %i", cur_r.neighbours[DOOR_TOP]);
                         char can_create_room = check_neighboor(&cur_r, DOOR_TOP);
-                        //if(cur_r.neighbours[DOOR_BOT] < 0)
                         if(can_create_room)
                         {
                             new_r = create_room(i, cur_r.id, DOOR_TOP, cur_r.x, cur_r.y - cur_r.dest.h - margin);
@@ -232,7 +252,6 @@ void generate_floor(int SEED)
                         SDL_Log("Current Room BOT neigh ID: %i", cur_r.neighbours[DOOR_BOT]);
 
                         char can_create_room = check_neighboor(&cur_r, DOOR_BOT);
-                        //if(cur_r.neighbours[DOOR_BOT] < 0)
                         if(can_create_room)
                         {
                             new_r = create_room(i, cur_r.id, DOOR_BOT, cur_r.x, cur_r.y + cur_r.dest.h + margin);
@@ -257,12 +276,10 @@ void generate_floor(int SEED)
                     {
                         goto pick_new_door;
                     }
-
-                    // if none of the doors are free, go back a room
-                    if(doors_count >= 4)
+                    elif(doors_count >= 4)
                     {
                         SDL_Log("Go Back a room");
-                        i--;
+                        i-=2;
                         new_r = all_rooms[i];
                         cur_r = all_rooms[i-1];
                         
@@ -271,8 +288,7 @@ void generate_floor(int SEED)
                             //TODO:
                             SDL_Log("ERROR, COULD NOT GENERATE FLOOR");
                             i = 999;
-                            cycles = 99999;
-                            goto break_generation;
+                            goto retry_generation_from_start;
                             break;
                         }
                     }
@@ -288,5 +304,5 @@ void generate_floor(int SEED)
 
 break_generation:
 
-    SDL_Log("Floor Gen Done.");
+    SDL_Log("Floor Gen Done. Took %i cycles", cycles);
 }

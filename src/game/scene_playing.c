@@ -1,12 +1,30 @@
 
+SDL_Rect gen_floor_btn;
+
 void init_playing(void)
 {
-    generate_floor(42);
+    gen_floor_btn.x = SCR_W - SCR_W / 8;
+    gen_floor_btn.y = 50;
+
+    gen_floor_btn.w = 100;
+    gen_floor_btn.h = 50;
+
+    //srand is seeded with 42
+    generate_floor(rand());
 }
 
 void update_playing(void)
 {
 
+    if(SDL_HasIntersection(&game.mouse_rect, &gen_floor_btn))
+    {
+        if(game.mouse.button[SDL_BUTTON_LEFT])
+        {
+            generate_floor(rand());
+
+            game.mouse.button[SDL_BUTTON_LEFT] = 0;
+        }
+    }
 }
 
 void render_playing(void)
@@ -44,8 +62,15 @@ void render_playing(void)
             }
 
             SDL_RenderFillRect(game.renderer, &r.dest_doors[j]);
-
         }
 
+        char buff[48];
+        sprintf(buff, "%i", r.id);
+
+        SDL_Rect dest = {r.x, r.y, 0, 0};
+        render_text(buff, dest, 0.6f);
     }
+
+    SDL_SetRenderDrawColor(game.renderer, 200, 0, 0, 255);
+    SDL_RenderFillRect(game.renderer, &gen_floor_btn);
 }

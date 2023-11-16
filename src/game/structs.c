@@ -41,6 +41,7 @@ typedef struct
     Delegate        delegate;
 
     Mouse           mouse;
+    SDL_Rect        mouse_rect;
 
     int             keyboard[MAX_KEYBOARD_KEYS];
 

@@ -24,6 +24,9 @@ void init_stage(void)
 
 inline void update(void)
 {
+    game.mouse_rect.x = game.mouse.x;
+    game.mouse_rect.y = game.mouse.y;
+
     switch(game_state)
     {
         case MAIN_MENU:
@@ -35,7 +38,7 @@ inline void update(void)
              }
              break;
         
-        case PLAYING:
+        case PLAYING: 
             {
                 //TODO:
                 update_playing();
