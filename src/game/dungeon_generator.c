@@ -1,29 +1,4 @@
 
-typedef enum
-{
-    DOOR_LEFT,
-    DOOR_RIGHT,
-    DOOR_TOP,
-    DOOR_BOT,
-
-    NUM_DOORS,
-} DoorSide;
-
-typedef struct Room
-{
-    int         id;
-    //index 0 - left, 1 - right, 2 - top, 3 - bot
-    int         doors[NUM_DOORS];
-    int         neighbours[NUM_DOORS]; // id of connected door at DOOR side
-    int         neighbours_count;
-
-    int         x;
-    int         y;
-    SDL_Rect    dest;
-    SDL_Rect    dest_doors[NUM_DOORS];
-} Room;
-
-Room starting_room = {};
 #define ROOMS_TO_GEN            9
 Room all_rooms[ROOMS_TO_GEN];
 
@@ -159,7 +134,7 @@ void generate_floor(int SEED)
 
 retry_generation_from_start:
 
-    starting_room = create_room( 0, -1, -1, ((18 * 16) * SCREEN_SCALE), ((1 * 16) * SCREEN_SCALE));
+    Room starting_room = create_room( 0, -1, -1, ((18 * 16) * SCREEN_SCALE), ((1 * 16) * SCREEN_SCALE));
 
     all_rooms[0] = starting_room;
 
@@ -199,6 +174,11 @@ retry_generation_from_start:
                         char can_create_room = check_neighboor(&cur_r, DOOR_LEFT);
                         if(can_create_room)
                         {
+                            //connect starting room to first created room
+                            if(i == 1)
+                            {
+                                all_rooms[0].neighbours[DOOR_LEFT] = i;
+                            }
                             new_r = create_room(i, cur_r.id, DOOR_LEFT, cur_r.x - cur_r.dest.w - margin, cur_r.y);
 
                             all_rooms[i] = new_r;
@@ -217,6 +197,11 @@ retry_generation_from_start:
                         char can_create_room = check_neighboor(&cur_r, DOOR_RIGHT);
                         if(can_create_room)
                         {
+                            //connect starting room to first created room
+                            if(i == 1)
+                            {
+                                all_rooms[0].neighbours[DOOR_RIGHT] = i;
+                            }
                             new_r = create_room(i, cur_r.id, DOOR_RIGHT, cur_r.x + cur_r.dest.w + margin, cur_r.y);
 
                             all_rooms[i] = new_r;
@@ -235,6 +220,11 @@ retry_generation_from_start:
                         char can_create_room = check_neighboor(&cur_r, DOOR_TOP);
                         if(can_create_room)
                         {
+                            //connect starting room to first created room
+                            if(i == 1)
+                            {
+                                all_rooms[0].neighbours[DOOR_TOP] = i;
+                            }
                             new_r = create_room(i, cur_r.id, DOOR_TOP, cur_r.x, cur_r.y - cur_r.dest.h - margin);
 
                             all_rooms[i] = new_r;
@@ -254,6 +244,11 @@ retry_generation_from_start:
                         char can_create_room = check_neighboor(&cur_r, DOOR_BOT);
                         if(can_create_room)
                         {
+                            //connect starting room to first created room
+                            if(i == 1)
+                            {
+                                all_rooms[0].neighbours[DOOR_BOT] = i;
+                            }
                             new_r = create_room(i, cur_r.id, DOOR_BOT, cur_r.x, cur_r.y + cur_r.dest.h + margin);
 
                             all_rooms[i] = new_r;

@@ -1,6 +1,7 @@
 
 SDL_Rect gen_floor_btn;
 
+SDL_Rect floor_bounds;
 PlayerData p_data;
 void init_player(void);
 
@@ -10,6 +11,7 @@ void draw_entities(void);
 void draw_entity(Entity_Type TYPE, char DEBUG);
 void draw_debug_rect(Entity *E);
 
+void draw_current_room();
 void draw_floor_map(void);
 
 void init_playing(void)
@@ -22,6 +24,8 @@ void init_playing(void)
 
     //srand is seeded with 42
     generate_floor(rand());
+
+    stage.current_room_id = all_rooms[0].id;
 
     init_player();
 }
@@ -43,18 +47,9 @@ void update_playing(void)
 
 void render_playing(void)
 {
-    {// floor for debugging visualization
-        SDL_Rect floor = 
-        {
-            32 * SCREEN_SCALE, 32 * SCREEN_SCALE, 256 * SCREEN_SCALE, 128 * SCREEN_SCALE
-        };
-
-        SDL_SetRenderDrawColor(game.renderer, 200, 0, 0, 255);
-        SDL_RenderDrawRect(game.renderer, &floor);
-    }
-
 
     draw_entities();
+    draw_current_room();
     draw_floor_map();
 
     {// button for regenerating dungeon
@@ -95,6 +90,8 @@ void init_player(void)
 
     stage.entity_pool[0] = p;
     stage.entity_count++;
+
+    stage.player = stage.entity_pool[0];
 }
 
 void update_entities(void)
@@ -109,54 +106,160 @@ void update_entities(void)
         switch(e->type)
         {
             case ENT_PLAYER:
+            {
+                if(e->active == true)
                 {
-                    if(e->active == true)
+                    e->vel.x = e->vel.y = 0;
+
+                    p_data.is_moving = false;    
+
+                    if(game.keyboard[SDL_SCANCODE_A])
                     {
-                        e->vel.x = e->vel.y = 0;
-
-                        p_data.is_moving = false;    
-
-                        if(game.keyboard[SDL_SCANCODE_A])
-                        {
-                            e->vel.x = -PLAYER_VELOCITY;
-                            p_data.is_moving = true;
-                        }
-                        if(game.keyboard[SDL_SCANCODE_D])
-                        {
-                            e->vel.x = PLAYER_VELOCITY;
-                            p_data.is_moving = true;
-                        }
-                        if(game.keyboard[SDL_SCANCODE_W])
-                        {
-                            e->vel.y = -PLAYER_VELOCITY;
-                            p_data.is_moving = true;
-                        }
-                        if(game.keyboard[SDL_SCANCODE_S])
-                        {
-                            e->vel.y = PLAYER_VELOCITY;
-                            p_data.is_moving = true;
-                        }
-
-                        /*
-                        if(player_data.is_moving)
-                        {
-                            anim_advance(e);
-                        }
-                        else
-                        {
-                            //NOTE: frame 1 is idle
-                            e->anim.cur_frame = 1;
-                            e->anim.frame_timer = 0;
-                        }
-                        */
-
-                        e->rect.x += e->vel.x * game.dt;
-                        e->rect.y += e->vel.y * game.dt;
+                        e->vel.x = -PLAYER_VELOCITY;
+                        p_data.is_moving = true;
                     }
-                    break;
+                    if(game.keyboard[SDL_SCANCODE_D])
+                    {
+                        e->vel.x = PLAYER_VELOCITY;
+                        p_data.is_moving = true;
+                    }
+                    if(game.keyboard[SDL_SCANCODE_W])
+                    {
+                        e->vel.y = -PLAYER_VELOCITY;
+                        p_data.is_moving = true;
+                    }
+                    if(game.keyboard[SDL_SCANCODE_S])
+                    {
+                        e->vel.y = PLAYER_VELOCITY;
+                        p_data.is_moving = true;
+                    }
+
+                    /*
+                    if(player_data.is_moving)
+                    {
+                        anim_advance(e);
+                    }
+                    else
+                    {
+                        //NOTE: frame 1 is idle
+                        e->anim.cur_frame = 1;
+                        e->anim.frame_timer = 0;
+                    }
+                    */
+
+                    e->rect.x += e->vel.x * game.dt;
+                    e->rect.y += e->vel.y * game.dt;
+
+                    if(e->rect.x < floor_bounds.x)
+                    {
+                        e->rect.x = floor_bounds.x;
+                    }
+                    elif(e->rect.x > ((floor_bounds.x + floor_bounds.w) - e->rect.w))
+                    {
+                        e->rect.x = ((floor_bounds.x + floor_bounds.w) - e->rect.w);
+                    }
+                    elif(e->rect.y < floor_bounds.y)
+                    {
+                        e->rect.y = floor_bounds.y;
+                    }
+                    elif(e->rect.y > ((floor_bounds.y + floor_bounds.h) - e->rect.h))
+                    {
+                        e->rect.y = ((floor_bounds.y + floor_bounds.h) - e->rect.h);
+                    }
                 }
+                break;
+            }
         }
     }
+}
+
+void draw_current_room()
+{
+    SDL_Rect room_bounds = 
+    {
+        16 * SCREEN_SCALE, 32 * SCREEN_SCALE, 288 * SCREEN_SCALE, 144 * SCREEN_SCALE
+    };
+
+    SDL_SetRenderDrawColor(game.renderer, 100, 0, 0, 255);
+    SDL_RenderDrawRect(game.renderer, &room_bounds);
+
+
+    floor_bounds.x = 32 * SCREEN_SCALE;
+    floor_bounds.y = 48 * SCREEN_SCALE;
+    floor_bounds.w = 256 * SCREEN_SCALE;
+    floor_bounds.h = 112 * SCREEN_SCALE;
+
+    SDL_SetRenderDrawColor(game.renderer, 100, 75, 0, 255);
+    SDL_RenderDrawRect(game.renderer, &floor_bounds);
+
+    /////////////////
+    SDL_Rect left_door_bounds = 
+    {
+        16 * SCREEN_SCALE, 89 * SCREEN_SCALE, 16 * SCREEN_SCALE, 30 * SCREEN_SCALE
+    };
+
+    if(all_rooms[stage.current_room_id].doors[DOOR_LEFT] == 1
+            AND all_rooms[stage.current_room_id].neighbours[DOOR_LEFT] != -1)
+    {
+        SDL_SetRenderDrawColor(game.renderer, 0, 245, 0, 255);
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(game.renderer, 245, 0, 0, 255);
+    }
+    SDL_RenderDrawRect(game.renderer, &left_door_bounds);
+
+    /////////////////
+    SDL_Rect right_door_bounds = 
+    {
+        288 * SCREEN_SCALE, 89 * SCREEN_SCALE, 16 * SCREEN_SCALE, 30 * SCREEN_SCALE
+    };
+
+    if(all_rooms[stage.current_room_id].doors[DOOR_RIGHT] == 1
+            AND all_rooms[stage.current_room_id].neighbours[DOOR_RIGHT] != -1)
+    {
+        SDL_SetRenderDrawColor(game.renderer, 0, 245, 0, 255);
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(game.renderer, 245, 0, 0, 255);
+    }
+    SDL_RenderDrawRect(game.renderer, &right_door_bounds);
+
+    //////////////
+    SDL_Rect top_door_bounds = 
+    {
+        144 * SCREEN_SCALE, 32 * SCREEN_SCALE, 30 * SCREEN_SCALE, 16 * SCREEN_SCALE
+    };
+
+    if(all_rooms[stage.current_room_id].doors[DOOR_TOP] == 1
+            AND all_rooms[stage.current_room_id].neighbours[DOOR_TOP] != -1)
+    {
+        SDL_SetRenderDrawColor(game.renderer, 0, 245, 0, 255);
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(game.renderer, 245, 0, 0, 255);
+    }
+    SDL_RenderDrawRect(game.renderer, &top_door_bounds);
+
+    /////////////////
+    SDL_Rect bot_door_bounds = 
+    {
+        144 * SCREEN_SCALE, 160 * SCREEN_SCALE, 30 * SCREEN_SCALE, 16 * SCREEN_SCALE
+    };
+
+    //SDL_Log("Bot state: %i, Bot ID: %i", all_rooms[stage.current_room_id].doors[DOOR_BOT], all_rooms[stage.current_room_id].neighbours[DOOR_BOT]);
+    if(all_rooms[stage.current_room_id].doors[DOOR_BOT] == 1
+            AND all_rooms[stage.current_room_id].neighbours[DOOR_BOT] != -1)
+    {
+        SDL_SetRenderDrawColor(game.renderer, 0, 245, 0, 255);
+    }
+    else
+    {
+        SDL_SetRenderDrawColor(game.renderer, 245, 0, 0, 255);
+    }
+    SDL_RenderDrawRect(game.renderer, &bot_door_bounds);
 }
 
 void draw_entities(void)
@@ -210,8 +313,16 @@ void draw_floor_map(void)
     {
         Room r = all_rooms[i];
 
-        SDL_SetRenderDrawColor(game.renderer, 0, 0, 200, 255);
-        SDL_RenderDrawRect(game.renderer, &r.dest);
+        SDL_SetRenderDrawColor(game.renderer, 0, 0, 220, 255);
+
+        if(stage.current_room_id == r.id)
+        {
+            SDL_RenderFillRect(game.renderer, &r.dest);
+        }
+        else
+        {
+            SDL_RenderDrawRect(game.renderer, &r.dest);
+        }
 
         SDL_SetRenderDrawColor(game.renderer, 100, 0, 0, 255);
 

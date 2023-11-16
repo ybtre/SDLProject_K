@@ -171,11 +171,37 @@ typedef struct
     
 } PlayerData;
 
+typedef enum
+{
+    DOOR_LEFT,
+    DOOR_RIGHT,
+    DOOR_TOP,
+    DOOR_BOT,
+
+    NUM_DOORS,
+} DoorSide;
+
+typedef struct Room
+{
+    int         id;
+    //index 0 - left, 1 - right, 2 - top, 3 - bot
+    int         doors[NUM_DOORS];
+    int         neighbours[NUM_DOORS]; // id of connected door at DOOR side
+    int         neighbours_count;
+
+    int         x;
+    int         y;
+    SDL_Rect    dest;
+    SDL_Rect    dest_doors[NUM_DOORS];
+} Room;
+
 typedef struct
 {
     Entity          player;
     int             entity_count;
     Entity          entity_pool[ENTITIES_MAX];
+
+    int             current_room_id;
 
     char            freeze_frame;
     float           freeze_frame_duration;

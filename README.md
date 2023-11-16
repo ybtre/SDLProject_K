@@ -38,6 +38,10 @@ Dungeon Game
 //16.1 -
 - floor generation - 1:30
 - player movement basics - 0;45
+- setup current room layout to match generated rooms 0:25
+- - using debug rects visualise room and state
+- player movement limited only to floor bounds - 0:05
+- detect which door is connected to another room and only highlight it
 
 //15.11 - 2:30
 - WIP floor generation - 2:30h
