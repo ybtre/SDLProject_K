@@ -15,9 +15,8 @@ Dungeon Game
               TODO:
 ////////////////////////////////////
 
-- mockup
-- room generation
-- player movement
+//- mockup
+//- room generation
 - player move between rooms
 - enemy generation in rooms
 - enemy pathfinding
@@ -38,6 +37,7 @@ Dungeon Game
 
 //16.1 -
 - floor generation - 1:30
+- player movement basics - 0;45
 
 //15.11 - 2:30
 - WIP floor generation - 2:30h

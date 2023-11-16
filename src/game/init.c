@@ -7,6 +7,7 @@ void init_game(void)
 
     init_fonts();
     //should init game.spritesheet here
+    game.spritesheet = load_texture("assets/spritesheet.png");
 }
 
 void init_SDL(void)
@@ -23,11 +24,14 @@ void init_SDL(void)
 		exit(1);
 	}
 
+    //NOTE: sdl2 mixer removed for now
+    /*
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) == -1)
 	{
 		printf("Couldn't initialize SDL Mixer\n");
 		exit(1);
 	}
+    */
 
     if (TTF_Init() < 0) 
     {
@@ -41,7 +45,8 @@ void init_SDL(void)
             exit(1);
         }
 
-	Mix_AllocateChannels(MAX_SND_CHANNELS);
+    //NOTE: sdl2 mixer removed for now
+	//Mix_AllocateChannels(MAX_SND_CHANNELS);
 
 	game.window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH * SCREEN_SCALE, SCREEN_HEIGHT * SCREEN_SCALE, window_flags);
 

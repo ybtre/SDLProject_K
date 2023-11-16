@@ -47,7 +47,11 @@ typedef struct
 
     TTF_Font        *font;
 
+    SDL_Texture     *spritesheet;
+
     Texture         texture_cache[TEXTURE_CACHE_MAX];
+
+    float           dt;
 } Game;
 Game game;
 
@@ -171,7 +175,7 @@ typedef struct
 {
     Entity          player;
     int             entity_count;
-    Entity          entities_pool[ENTITIES_MAX];
+    Entity          entity_pool[ENTITIES_MAX];
 
     char            freeze_frame;
     float           freeze_frame_duration;

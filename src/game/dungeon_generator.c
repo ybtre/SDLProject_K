@@ -67,27 +67,27 @@ Room create_room(int ID, int PREV_R_ID, int PREV_DOOR, int X, int Y)
         }
     }
 
-    r.dest.w = 8 * SCREEN_SCALE;
-    r.dest.h = 8 * SCREEN_SCALE;
+    r.dest.w = 6 * SCREEN_SCALE;
+    r.dest.h = 6 * SCREEN_SCALE;
     r.dest.x = r.x - (r.dest.w / 2);
     r.dest.y = r.y - (r.dest.h / 2);
 
     r.dest_doors[DOOR_LEFT].w = 1 * SCREEN_SCALE;
-    r.dest_doors[DOOR_LEFT].h = 2 * SCREEN_SCALE;
+    r.dest_doors[DOOR_LEFT].h = 1 * SCREEN_SCALE;
     r.dest_doors[DOOR_LEFT].x = (r.dest.x - (r.dest_doors[DOOR_LEFT].w / 2));
     r.dest_doors[DOOR_LEFT].y = (r.dest.y - (r.dest_doors[DOOR_LEFT].h / 2)) + r.dest.h /2;
 
     r.dest_doors[DOOR_RIGHT].w = 1 * SCREEN_SCALE;
-    r.dest_doors[DOOR_RIGHT].h = 2 * SCREEN_SCALE;
+    r.dest_doors[DOOR_RIGHT].h = 1 * SCREEN_SCALE;
     r.dest_doors[DOOR_RIGHT].x = (r.dest.x - (r.dest_doors[DOOR_LEFT].w / 2) + (r.dest.h ));
     r.dest_doors[DOOR_RIGHT].y = (r.dest.y - (r.dest_doors[DOOR_LEFT].h / 2)) + r.dest.h /2;
 
-    r.dest_doors[DOOR_TOP].w = 2 * SCREEN_SCALE;
+    r.dest_doors[DOOR_TOP].w = 1 * SCREEN_SCALE;
     r.dest_doors[DOOR_TOP].h = 1 * SCREEN_SCALE;
     r.dest_doors[DOOR_TOP].x = (r.dest.x - (r.dest_doors[DOOR_TOP].w / 2)) + r.dest.w /2;
     r.dest_doors[DOOR_TOP].y = (r.dest.y - (r.dest_doors[DOOR_LEFT].h / 2)) + r.dest_doors[DOOR_TOP].h / 2;
 
-    r.dest_doors[DOOR_BOT].w = 2 * SCREEN_SCALE;
+    r.dest_doors[DOOR_BOT].w = 1 * SCREEN_SCALE;
     r.dest_doors[DOOR_BOT].h = 1 * SCREEN_SCALE;
     r.dest_doors[DOOR_BOT].x = (r.dest.x - (r.dest_doors[DOOR_BOT].w / 2)) + r.dest.w /2;
     r.dest_doors[DOOR_BOT].y = (r.dest.y - (r.dest_doors[DOOR_BOT].h / 2)) + r.dest.h;
@@ -100,7 +100,7 @@ char check_neighboor(Room *ROOM, int DIRECTION_TO_CHECK)
     char result = false;
 
     int x, y, margin;
-    margin = 5 * SCREEN_SCALE;
+    margin = 2 * SCREEN_SCALE;
 
     if(DIRECTION_TO_CHECK == DOOR_LEFT)
     {
@@ -159,7 +159,7 @@ void generate_floor(int SEED)
 
 retry_generation_from_start:
 
-    starting_room = create_room( 0, -1, -1, SCR_W/2, SCR_H/2);
+    starting_room = create_room( 0, -1, -1, ((18 * 16) * SCREEN_SCALE), ((1 * 16) * SCREEN_SCALE));
 
     all_rooms[0] = starting_room;
 
@@ -180,7 +180,7 @@ retry_generation_from_start:
             goto break_generation;
         };
 
-        int margin = 5 * SCREEN_SCALE;
+        int margin = 2 * SCREEN_SCALE;
         int new_room_door = rand() % 4;
         SDL_Log("Picking new door: %i", new_room_door);
 

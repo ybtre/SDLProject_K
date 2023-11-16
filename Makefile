@@ -11,7 +11,7 @@ LIBRARY_PATHS = -Lsrc/lib
 # -Wl,-subsystem,windows gets rid of the console window
 COMPILER_FLAGS = -Wextra -g -O0
 
-LINKER_FLAGS = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+LINKER_FLAGS = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_ttf
 
 OBJ_NAME = build/Game
 
