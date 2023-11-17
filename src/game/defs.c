@@ -18,7 +18,7 @@
 #define ENTITIES_MAX            256
 
 #define PLAYER_SPEED            20
-#define PLAYER_VELOCITY         .3
+#define PLAYER_VELOCITY         .9
 
 #define PLAYER_BULLET_SPEED     4
 

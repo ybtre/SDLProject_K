@@ -103,9 +103,14 @@ typedef enum Entity_Type
 
     ENT_BACKGROUND,
 
-    ENT_DOOR,
+    ENT_FLOOR,
 
-    ENT_WALL,
+    ENT_DOOR_LEFT,
+    ENT_DOOR_RIGHT,
+    ENT_DOOR_TOP,
+    ENT_DOOR_BOT,
+
+    ENT_WALLS,
 
 
     NUM_ENTITIES
@@ -197,11 +202,12 @@ typedef struct Room
 
 typedef struct
 {
-    Entity          player;
+    Entity          *player;
     int             entity_count;
     Entity          entity_pool[ENTITIES_MAX];
 
     int             current_room_id;
+    char            interacted_with_door;
 
     char            freeze_frame;
     float           freeze_frame_duration;

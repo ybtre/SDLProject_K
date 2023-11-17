@@ -18,27 +18,33 @@ Room create_room(int ID, int PREV_R_ID, int PREV_DOOR, int X, int Y)
 
     if(PREV_R_ID != -1)
     {
+        //TODO: somehow this gets insanely high?????????
         r.neighbours_count++;
-
+    
+        // need better solution to connect neighbours
         if(PREV_DOOR == DOOR_LEFT)
         {
-            r.neighbours[DOOR_RIGHT]     = PREV_R_ID;
-            r.doors[DOOR_RIGHT]          = 1;
+            r.neighbours[DOOR_RIGHT]                    = PREV_R_ID;
+            r.doors[DOOR_RIGHT]                         = 1;
+            all_rooms[PREV_R_ID].neighbours[DOOR_LEFT]  = r.id;
         }
         elif(PREV_DOOR == DOOR_RIGHT)
         {
-            r.neighbours[DOOR_LEFT]      = PREV_R_ID;
-            r.doors[DOOR_LEFT]           = 1;
+            r.neighbours[DOOR_LEFT]                     = PREV_R_ID;
+            r.doors[DOOR_LEFT]                          = 1;
+            all_rooms[PREV_R_ID].neighbours[DOOR_RIGHT] = r.id;
         }
         elif(PREV_DOOR == DOOR_TOP)
         {
-            r.neighbours[DOOR_BOT]       = PREV_R_ID;
-            r.doors[DOOR_BOT]            = 1;
+            r.neighbours[DOOR_BOT]                      = PREV_R_ID;
+            r.doors[DOOR_BOT]                           = 1;
+            all_rooms[PREV_R_ID].neighbours[DOOR_TOP]   = r.id;
         }
         elif(PREV_DOOR == DOOR_BOT)
         {
-            r.neighbours[DOOR_TOP]       = PREV_R_ID;
-            r.doors[DOOR_TOP]            = 1;
+            r.neighbours[DOOR_TOP]                      = PREV_R_ID;
+            r.doors[DOOR_TOP]                           = 1;
+            all_rooms[PREV_R_ID].neighbours[DOOR_BOT]   = r.id;
         }
     }
 
@@ -148,6 +154,10 @@ retry_generation_from_start:
 
         int doors_count = 0;
 
+        if(i == 2)
+        {
+            SDL_Log("Break:");
+        }
         pick_new_door:
         if(cycles >= max_cycles)
         {
@@ -158,7 +168,6 @@ retry_generation_from_start:
         int margin = 2 * SCREEN_SCALE;
         int new_room_door = rand() % 4;
         SDL_Log("Picking new door: %i", new_room_door);
-
         {
             cycles++;
             SDL_Log("Current Room ID: %i", cur_r.id);
@@ -300,4 +309,5 @@ retry_generation_from_start:
 break_generation:
 
     SDL_Log("Floor Gen Done. Took %i cycles", cycles);
+    SDL_Log("Neigh states %i %i %i %i", all_rooms[1].neighbours[0], all_rooms[1].neighbours[1],all_rooms[1].neighbours[2],all_rooms[1].neighbours[3]);
 }

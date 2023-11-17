@@ -17,7 +17,7 @@ Dungeon Game
 
 //- mockup
 //- room generation
-- player move between rooms
+- connect neighbours debug...
 - enemy generation in rooms
 - enemy pathfinding
 - basic combat
@@ -34,6 +34,10 @@ Dungeon Game
 ////////////////////////////////////
               DONE:
 ////////////////////////////////////
+
+//16.11 - 2h
+- player move between rooms
+- refactoring from yesterday's code
 
 //16.1 -
 - floor generation - 1:30

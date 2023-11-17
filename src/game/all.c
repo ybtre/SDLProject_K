@@ -21,13 +21,14 @@
 #include "util.c"
 
 #include "input.c"
-
 #include "draw.c"
-
 #include "text.c"
 
 #include "init.c"
+
 #include "dungeon_generator.c"
+
+#include "entities.c"
 #include "scene_playing.c"
 #include "stage.c"
 #include "main.c"

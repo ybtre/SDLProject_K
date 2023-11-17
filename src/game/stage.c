@@ -20,6 +20,7 @@ void init_stage(void)
     game_state = PLAYING;
 
     init_playing();
+
 }
 
 inline void update(void)
