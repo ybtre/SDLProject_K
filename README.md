@@ -35,7 +35,11 @@ Dungeon Game
               DONE:
 ////////////////////////////////////
 
-//16.11 - 2h
+//19.11 - 1:30
+- connect all neighbours to every room
+- fixed transitioning from room to room
+
+//17.11 - 2h
 - player move between rooms
 - refactoring from yesterday's code
 

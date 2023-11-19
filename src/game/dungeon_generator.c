@@ -2,6 +2,9 @@
 #define ROOMS_TO_GEN            9
 Room all_rooms[ROOMS_TO_GEN];
 
+Room get_room_at_pos(int X, int Y);
+void find_neighbours();
+
 Room create_room(int ID, int PREV_R_ID, int PREV_DOOR, int X, int Y)
 {
     Room r;
@@ -76,7 +79,91 @@ Room create_room(int ID, int PREV_R_ID, int PREV_DOOR, int X, int Y)
     return(r);
 }
 
-char check_neighboor(Room *ROOM, int DIRECTION_TO_CHECK)
+char check(int X, int Y)
+{
+    char neigh_id = -1;
+
+    Room tmp = create_room(-2, -1, -1, X, Y);
+
+    for(int i = 0; i < ROOMS_TO_GEN; i++)
+    {
+        Room t = all_rooms[i];
+
+        if(t.x == tmp.x 
+            AND t.y == tmp.y)
+        {
+            SDL_Log("Found neighbour %i %i at %i %i NEIGH ID %i", t.x, t.y, tmp.x, tmp.y, t.id);
+            neigh_id = t.id;
+            break;
+        }
+    }
+
+    return(neigh_id);
+}
+
+void find_neighbours(Room *ROOM)
+{
+    int x, y, count, margin, res_id;
+    count = 0;
+    margin = 2 * SCREEN_SCALE;
+    Room *neigh;
+
+    x = ROOM->x - ROOM->dest.w - margin;
+    y = ROOM->y;
+    res_id = check(x, y);
+    if(res_id != -1)
+    {
+        count++;
+        SDL_Log("LEFT NEIGH");
+        neigh = &all_rooms[res_id];
+        ROOM->neighbours[DOOR_LEFT]     = res_id;
+        ROOM->doors[DOOR_LEFT]          = 1;
+        neigh->neighbours[DOOR_RIGHT]   = ROOM->id;
+        neigh->doors[DOOR_RIGHT]        = 1;
+    };
+    x = ROOM->x + ROOM->dest.w + margin;
+    y = ROOM->y;
+    res_id = check(x, y);
+    if(res_id != -1)
+    {
+        count++;
+        SDL_Log("RIGHT NEIGH");
+        neigh = &all_rooms[res_id];
+        ROOM->neighbours[DOOR_RIGHT]     = res_id;
+        ROOM->doors[DOOR_RIGHT]          = 1;
+        neigh->neighbours[DOOR_LEFT]     = ROOM->id;
+        neigh->doors[DOOR_LEFT]          = 1;
+    };
+    x = ROOM->x;
+    y = ROOM->y - ROOM->dest.h - margin;
+    res_id = check(x, y);
+    if(res_id != -1)
+    {
+        count++;
+        SDL_Log("TOP NEIGH");
+        neigh = &all_rooms[res_id];
+        ROOM->neighbours[DOOR_TOP]      = res_id;
+        ROOM->doors[DOOR_TOP]           = 1;
+        neigh->neighbours[DOOR_BOT]     = ROOM->id;
+        neigh->doors[DOOR_BOT]          = 1;
+    };
+    x = ROOM->x;
+    y = ROOM->y + ROOM->dest.h + margin;
+    res_id = check(x, y);
+    if(res_id != -1)
+    {
+        count++;
+        SDL_Log("BOT NEIGH");
+        neigh = &all_rooms[res_id];
+        ROOM->neighbours[DOOR_BOT]      = res_id;
+        ROOM->doors[DOOR_BOT]           = 1;
+        neigh->neighbours[DOOR_TOP]     = ROOM->id;
+        neigh->doors[DOOR_TOP]          = 1;
+    };
+
+}
+
+char check_neighboor(Room ROOM, int DIRECTION_TO_CHECK)
 {
     char result = false;
 
@@ -85,23 +172,23 @@ char check_neighboor(Room *ROOM, int DIRECTION_TO_CHECK)
 
     if(DIRECTION_TO_CHECK == DOOR_LEFT)
     {
-        x = ROOM->x - ROOM->dest.w - margin;
-        y = ROOM->y;
+        x = ROOM.x - ROOM.dest.w - margin;
+        y = ROOM.y;
     }
     elif(DIRECTION_TO_CHECK == DOOR_RIGHT)
     {
-        x = ROOM->x + ROOM->dest.w + margin;
-        y = ROOM->y;
+        x = ROOM.x + ROOM.dest.w + margin;
+        y = ROOM.y;
     }
     elif(DIRECTION_TO_CHECK == DOOR_TOP)
     {
-        x = ROOM->x;
-        y = ROOM->y - ROOM->dest.h - margin;
+        x = ROOM.x;
+        y = ROOM.y - ROOM.dest.h - margin;
     }
     elif(DIRECTION_TO_CHECK == DOOR_BOT)
     {
-        x = ROOM->x;
-        y = ROOM->y + ROOM->dest.h + margin;
+        x = ROOM.x;
+        y = ROOM.y + ROOM.dest.h + margin;
     }
 
     Room tmp = create_room(-2, -1, -1, x, y);
@@ -180,7 +267,7 @@ retry_generation_from_start:
                     {
                         SDL_Log("Making Room on the Left");
                         SDL_Log("Current Room LEFT neigh ID: %i", cur_r.neighbours[DOOR_LEFT]);
-                        char can_create_room = check_neighboor(&cur_r, DOOR_LEFT);
+                        char can_create_room = check_neighboor(cur_r, DOOR_LEFT);
                         if(can_create_room)
                         {
                             //connect starting room to first created room
@@ -203,7 +290,7 @@ retry_generation_from_start:
                     {
                         SDL_Log("Making Room on the Right");
                         SDL_Log("Current Room RIGHT neigh ID: %i", cur_r.neighbours[DOOR_RIGHT]);
-                        char can_create_room = check_neighboor(&cur_r, DOOR_RIGHT);
+                        char can_create_room = check_neighboor(cur_r, DOOR_RIGHT);
                         if(can_create_room)
                         {
                             //connect starting room to first created room
@@ -226,7 +313,7 @@ retry_generation_from_start:
                     {
                         SDL_Log("Making Room on the Top");
                         SDL_Log("Current Room TOP neigh ID: %i", cur_r.neighbours[DOOR_TOP]);
-                        char can_create_room = check_neighboor(&cur_r, DOOR_TOP);
+                        char can_create_room = check_neighboor(cur_r, DOOR_TOP);
                         if(can_create_room)
                         {
                             //connect starting room to first created room
@@ -250,7 +337,7 @@ retry_generation_from_start:
                         SDL_Log("Making Room on the Bot");
                         SDL_Log("Current Room BOT neigh ID: %i", cur_r.neighbours[DOOR_BOT]);
 
-                        char can_create_room = check_neighboor(&cur_r, DOOR_BOT);
+                        char can_create_room = check_neighboor(cur_r, DOOR_BOT);
                         if(can_create_room)
                         {
                             //connect starting room to first created room
@@ -309,5 +396,16 @@ retry_generation_from_start:
 break_generation:
 
     SDL_Log("Floor Gen Done. Took %i cycles", cycles);
-    SDL_Log("Neigh states %i %i %i %i", all_rooms[1].neighbours[0], all_rooms[1].neighbours[1],all_rooms[1].neighbours[2],all_rooms[1].neighbours[3]);
+    //SDL_Log("Neigh states %i %i %i %i", all_rooms[1].neighbours[0], all_rooms[1].neighbours[1],all_rooms[1].neighbours[2],all_rooms[1].neighbours[3]);
+    for(int i = 0; i < ROOMS_TO_GEN; i++)
+    {
+        SDL_Log("------------------------------------------------");
+        Room *r = &all_rooms[i];
+        for(int j = 0; j < NUM_DOORS; j++)
+        {
+            r->doors[j] = 0;
+        }
+        SDL_Log("--------------------ID:%i------------------------", r->id);
+        find_neighbours(r);
+    }
 }
