@@ -1,4 +1,4 @@
-#DevLog - ~4:30h
+#DevLog - ~13:45h
 Dungeon Game
 
 ## Game 6/10 in the 10 games in 10 weeks challenge
@@ -17,7 +17,6 @@ Dungeon Game
 
 //- mockup
 //- room generation
-- connect neighbours debug...
 - enemy generation in rooms
 - enemy pathfinding
 - basic combat
@@ -35,6 +34,11 @@ Dungeon Game
               DONE:
 ////////////////////////////////////
 
+//20.11
+- room types and states ~0:20
+- teleport player in front of door when transitioning to new room -0:10
+- fix: going out of corner screen bounds 0:05
+
 //19.11 - 1:30
 - connect all neighbours to every room
 - fixed transitioning from room to room
@@ -43,7 +47,7 @@ Dungeon Game
 - player move between rooms
 - refactoring from yesterday's code
 
-//16.1 -
+//16.1 - 2:45
 - floor generation - 1:30
 - player movement basics - 0;45
 - setup current room layout to match generated rooms 0:25

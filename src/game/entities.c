@@ -29,7 +29,7 @@ void init_player(void)
     p.rect.w        = 8 * SCREEN_SCALE;
     p.rect.h        = 8 * SCREEN_SCALE;
     p.rect.x        = SCR_W/2 - p.rect.w/2; // center
-    p.rect.y        = SCR_H/2 - p.rect.h/2; // center
+    p.rect.y        = SCR_H/2 - p.rect.h/2 + 10 * SCREEN_SCALE; // center
 
     p.vel.x         = 0;
     p.vel.y         = 0;
@@ -288,17 +288,17 @@ void update_entities(void)
                     {
                         e->rect.x = floor.rect.x - e->rect.w;
                     }
-                    elif(e->rect.x > ((floor.rect.x + floor.rect.w) + e->rect.w))
+                    if(e->rect.x > (floor.rect.x + floor.rect.w))
                     {
-                        e->rect.x = ((floor.rect.x + floor.rect.w) + e->rect.w);
+                        e->rect.x = (floor.rect.x + floor.rect.w);
                     }
-                    elif(e->rect.y < floor.rect.y - e->rect.w)
+                    if(e->rect.y < floor.rect.y - e->rect.w)
                     {
                         e->rect.y = floor.rect.y - e->rect.w;
                     }
-                    elif(e->rect.y > ((floor.rect.y + floor.rect.h) + e->rect.h))
+                    if(e->rect.y > (floor.rect.y + floor.rect.h))
                     {
-                        e->rect.y = ((floor.rect.y + floor.rect.h) + e->rect.h);
+                        e->rect.y = (floor.rect.y + floor.rect.h);
                     }
                 }
                 break;

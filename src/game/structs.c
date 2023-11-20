@@ -186,9 +186,26 @@ typedef enum
     NUM_DOORS,
 } DoorSide;
 
+typedef enum
+{
+    ROOM_STATE_ACTIVE,
+    ROOM_STATE_CLEARED,
+    ROOM_STATE_UNCLEARED,
+} Room_State;
+
+typedef enum
+{
+    ROOM_TYPE_STARTING,
+    ROOM_TYPE_BOSS,
+    ROOM_TYPE_COMBAT,
+} Room_Type;
+
 typedef struct Room
 {
     int         id;
+    Room_State  state;
+    Room_Type   type;
+
     //index 0 - left, 1 - right, 2 - top, 3 - bot
     int         doors[NUM_DOORS];
     int         neighbours[NUM_DOORS]; // id of connected door at DOOR side

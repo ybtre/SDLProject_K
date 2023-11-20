@@ -44,7 +44,6 @@ void render_text(char* text, SDL_Rect dest, float SCALE) {
     SDL_FreeSurface(surf);
 }
 
-
 float get_angle(int X1, int Y1, int X2, int Y2)
 {
     float angle = -90 + atan2(Y1 - Y2, X1 - X2) * (180 / PI);

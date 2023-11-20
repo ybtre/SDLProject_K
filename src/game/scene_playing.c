@@ -55,6 +55,16 @@ void render_playing(void)
         SDL_SetRenderDrawColor(game.renderer, 200, 0, 0, 255);
         SDL_RenderFillRect(game.renderer, &gen_floor_btn);
     }
+
+    gen_floor_btn.x = SCR_W / 10;
+    gen_floor_btn.y = 50;
+
+    Room curr = all_rooms[stage.current_room_id];
+    SDL_Rect dest = { SCR_W / 10, 20, 0, 0};
+
+    char buff[64];
+    sprintf(buff, "Room state: %i, Room type: %i", curr.state, curr.type);
+    render_text(buff, dest, 1.f);
 }
 
 void transition_to_room(void)
@@ -64,14 +74,40 @@ void transition_to_room(void)
     int next_room_id = current.neighbours[stage.interacted_with_door];
     //SDL_Log("Next room id %i", next_room_id);
 
+    if(stage.interacted_with_door == DOOR_LEFT)
+    {
+        Entity door = get_entity(ENT_DOOR_RIGHT);
+        stage.player->rect.x    = (door.rect.x + door.rect.w /2) - stage.player->rect.w *2;
+        stage.player->rect.y    = (door.rect.y + door.rect.h /2) - stage.player->rect.h /2;
+    }
+    elif(stage.interacted_with_door == DOOR_RIGHT)
+    {
+        Entity door = get_entity(ENT_DOOR_LEFT);
+        stage.player->rect.x    = (door.rect.x + door.rect.w /2) + stage.player->rect.w;
+        stage.player->rect.y    = (door.rect.y + door.rect.h /2) - stage.player->rect.h /2;
+    }
+    elif(stage.interacted_with_door == DOOR_TOP)
+    {
+        Entity door = get_entity(ENT_DOOR_BOT);
+        stage.player->rect.x    = (door.rect.x + door.rect.w /2) - stage.player->rect.w/2;
+        stage.player->rect.y    = (door.rect.y + door.rect.h /2) - stage.player->rect.h * 2;
+    }
+    elif(stage.interacted_with_door == DOOR_BOT)
+    {
+        Entity door = get_entity(ENT_DOOR_TOP);
+        stage.player->rect.x    = (door.rect.x + door.rect.w /2) - stage.player->rect.w/2;
+        stage.player->rect.y    = (door.rect.y + door.rect.h /2) + stage.player->rect.h;
+    }
+    /*
     stage.player->rect.x        = SCR_W/2 - stage.player->rect.w/2; // center
     stage.player->rect.y        = SCR_H/2 - stage.player->rect.h/2; // center
+                                                                    // */
                                             //
     stage.current_room_id = next_room_id; 
     SDL_Log("New Current room id %i", stage.current_room_id);
-    SDL_Log("Door states %i %i %i %i", all_rooms[stage.current_room_id].doors[0], all_rooms[stage.current_room_id].doors[1],all_rooms[stage.current_room_id].doors[2],all_rooms[stage.current_room_id].doors[3]);
+    //SDL_Log("Door states %i %i %i %i", all_rooms[stage.current_room_id].doors[0], all_rooms[stage.current_room_id].doors[1],all_rooms[stage.current_room_id].doors[2],all_rooms[stage.current_room_id].doors[3]);
 
-    SDL_Log("Neigh states %i %i %i %i", all_rooms[stage.current_room_id].neighbours[0], all_rooms[stage.current_room_id].neighbours[1],all_rooms[stage.current_room_id].neighbours[2],all_rooms[stage.current_room_id].neighbours[3]);
+    //SDL_Log("Neigh states %i %i %i %i", all_rooms[stage.current_room_id].neighbours[0], all_rooms[stage.current_room_id].neighbours[1],all_rooms[stage.current_room_id].neighbours[2],all_rooms[stage.current_room_id].neighbours[3]);
 }
 
 

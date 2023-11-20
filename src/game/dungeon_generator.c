@@ -228,6 +228,8 @@ void generate_floor(int SEED)
 retry_generation_from_start:
 
     Room starting_room = create_room( 0, -1, -1, ((18 * 16) * SCREEN_SCALE), ((1 * 16) * SCREEN_SCALE));
+    starting_room.type = ROOM_TYPE_STARTING;
+    starting_room.state = ROOM_STATE_ACTIVE;
 
     all_rooms[0] = starting_room;
 
@@ -277,6 +279,12 @@ retry_generation_from_start:
                             }
                             new_r = create_room(i, cur_r.id, DOOR_LEFT, cur_r.x - cur_r.dest.w - margin, cur_r.y);
 
+                            new_r.type = ROOM_TYPE_COMBAT;
+                            new_r.state = ROOM_STATE_UNCLEARED;
+                            if(i == 8)
+                            {
+                                new_r.type = ROOM_TYPE_BOSS;
+                            }
                             all_rooms[i] = new_r;
                             doors_count = 0;
                         }
@@ -300,6 +308,12 @@ retry_generation_from_start:
                             }
                             new_r = create_room(i, cur_r.id, DOOR_RIGHT, cur_r.x + cur_r.dest.w + margin, cur_r.y);
 
+                            new_r.type = ROOM_TYPE_COMBAT;
+                            new_r.state = ROOM_STATE_UNCLEARED;
+                            if(i == 8)
+                            {
+                                new_r.type = ROOM_TYPE_BOSS;
+                            }
                             all_rooms[i] = new_r;
                             doors_count = 0;
                         }
@@ -323,6 +337,12 @@ retry_generation_from_start:
                             }
                             new_r = create_room(i, cur_r.id, DOOR_TOP, cur_r.x, cur_r.y - cur_r.dest.h - margin);
 
+                            new_r.type = ROOM_TYPE_COMBAT;
+                            new_r.state = ROOM_STATE_UNCLEARED;
+                            if(i == 8)
+                            {
+                                new_r.type = ROOM_TYPE_BOSS;
+                            }
                             all_rooms[i] = new_r;
                             doors_count = 0;
                         }
@@ -347,6 +367,12 @@ retry_generation_from_start:
                             }
                             new_r = create_room(i, cur_r.id, DOOR_BOT, cur_r.x, cur_r.y + cur_r.dest.h + margin);
 
+                            new_r.type = ROOM_TYPE_COMBAT;
+                            new_r.state = ROOM_STATE_UNCLEARED;
+                            if(i == 8)
+                            {
+                                new_r.type = ROOM_TYPE_BOSS;
+                            }
                             all_rooms[i] = new_r;
                             doors_count = 0;
                         }
