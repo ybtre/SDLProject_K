@@ -102,9 +102,16 @@ void transition_to_room(void)
     stage.player->rect.x        = SCR_W/2 - stage.player->rect.w/2; // center
     stage.player->rect.y        = SCR_H/2 - stage.player->rect.h/2; // center
                                                                     // */
-                                            //
+                                          
+    //TODO: Should be set to cleared whenever fighting ends in given room, not on transition
+    current.state       = ROOM_STATE_CLEARED;
+
     stage.current_room_id = next_room_id; 
+
     SDL_Log("New Current room id %i", stage.current_room_id);
+    current = all_rooms[stage.current_room_id];
+    // set new current room as active room
+    current.state       = ROOM_STATE_ACTIVE;
     //SDL_Log("Door states %i %i %i %i", all_rooms[stage.current_room_id].doors[0], all_rooms[stage.current_room_id].doors[1],all_rooms[stage.current_room_id].doors[2],all_rooms[stage.current_room_id].doors[3]);
 
     //SDL_Log("Neigh states %i %i %i %i", all_rooms[stage.current_room_id].neighbours[0], all_rooms[stage.current_room_id].neighbours[1],all_rooms[stage.current_room_id].neighbours[2],all_rooms[stage.current_room_id].neighbours[3]);

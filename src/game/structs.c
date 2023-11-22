@@ -189,6 +189,7 @@ typedef enum
 typedef enum
 {
     ROOM_STATE_ACTIVE,
+    ROOM_STATE_INACTIVE,
     ROOM_STATE_CLEARED,
     ROOM_STATE_UNCLEARED,
 } Room_State;
